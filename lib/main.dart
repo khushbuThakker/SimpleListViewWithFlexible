@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rest_api/rest_api.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,160 +24,84 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<ListData> monitorList = new List();
+
 
   @override
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
+    getList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Flutter REST API"),
-      ),
-      body: FutureBuilder(
-
-        future: ApiService.getEmployees(),
-        builder: (context, snapshot) {
-
-          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-            final employees = snapshot.data;
-
-            return ListView.separated(
-              separatorBuilder: (context, index) {
-                return Divider(
-                  height: 2,
-                  color: Colors.black,
-                );
-              },
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(employees[index]['employee_name']),
-                  subtitle: Text('Age: ${employees[index]['employee_age']}'),
-                );
-              },
-              itemCount: employees.length,
-            );
-          }else{
-            return Center(
-
-              child: Text("No data found"),
-
-            );
-          }
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddNewEmployeePage(),
-            ),
-          );
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-
-
-
-
-//This will show if have time in session other only listing will be showing
-
-class AddNewEmployeePage extends StatefulWidget {
-  AddNewEmployeePage({Key key}) : super(key: key);
-
-  _AddNewEmployeePageState createState() => _AddNewEmployeePageState();
-}
-
-class _AddNewEmployeePageState extends State<AddNewEmployeePage> {
-  final _employeeNameController = TextEditingController();
-  final _employeeAge = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('New Employee'),
-      ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            children: <Widget>[
-              TextField(
-                controller: _employeeNameController,
-                decoration: InputDecoration(hintText: 'Employee Name'),
-              ),
-              TextField(
-                controller: _employeeAge,
-                decoration: InputDecoration(hintText: 'Employee Age'),
-                keyboardType: TextInputType.number,
-              ),
-              RaisedButton(
-                child: Text(
-                  'SAVE',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                color: Colors.purple,
-                onPressed: () {
-                  final body = {
-                    "name": _employeeNameController.text,
-                    "age": _employeeAge.text,
-                  };
-                  ApiService.addEmployee(body).then((success) {
-                    if (success) {
-                      showDialog(
-                        builder: (context) => AlertDialog(
-                          title: Text('Employee has been added!!!'),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                _employeeNameController.text = '';
-                                _employeeAge.text = '';
-                              },
-                              child: Text('OK'),
-                            )
-                          ],
-                        ),
-                        context: context,
-                      );
-                      return;
-                    }else{
-                      showDialog(
-                        builder: (context) => AlertDialog(
-                          title: Text('Error Adding Employee!!!'),
-                          actions: <Widget>[
-                            FlatButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text('OK'),
-                            )
-                          ],
-                        ),
-                        context: context,
-                      );
-                      return;
-                    }
-                  });
-                },
-              )
-            ],
-          ),
+        appBar: AppBar(
+          title: Text("Flutter Rest Api"),
         ),
-      ),
+        body: ListView.builder(
+          itemBuilder: (context, index) {
+            return Card( //
+              elevation: 8, //                           <-- Card widget
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(2.0, 4.0, 2.0, 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Flexible(
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        color: monitorList[index].color,
+                      ),
+                      flex: 1,
+                    ),
+                    Flexible(child: Text(
+                      'The ID is $index', style: TextStyle(fontSize: 16),),
+                      flex: 1,),
+                    Flexible(
+                      child: Text(monitorList[index].description,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 16),),
+                      flex: 1,
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+          itemCount: monitorList.length,
+        )
     );
   }
+
+
+  getList() {
+    monitorList.add(ListData(Colors.blue, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.yellow, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.blue, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.red, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.pink, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.purple, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.blueGrey, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.deepOrange, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.lime, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.teal, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.blueGrey, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.red, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.teal, "Abcdefghijklmnopqrstuvwxyz"));
+    monitorList.add(ListData(Colors.yellow, "Abcdefghijklmnopqrstuvwxyz"));
+  }
 }
+
+class ListData {
+
+  ListData(this.color, this.description);
+
+  var color = Colors.blue;
+  var description = "";
+
+}
+
